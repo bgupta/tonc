@@ -14,7 +14,7 @@ As said, the entire GBA screen is refreshed every 60th of a second, but there's 
 
 Both the [CowBite Spec](http://www.cs.rit.edu/~tjh8300/CowBite/CowBiteSpec.htm#Graphics%20Hardware%20Overview) and [GBATEK](https://problemkaputt.de/gbatek.htm#lcddimensionsandtimings) give you some interesting details about the timings of the display. A full screen refresh takes exactly 280896 cycles, divided by the clock speed gives a framerate of 59.73. From the Draw/Blank periods given above you can see that there are 4 cycles per pixel, and 1232 cycles per scanline. You can find a summary of timing details in table 4.1.
 
-<br>  
+<br>
 
 <table width=80%>
 <tr align="center">
@@ -53,11 +53,11 @@ Both the [CowBite Spec](http://www.cs.rit.edu/~tjh8300/CowBite/CowBiteSpec.htm#G
 ## Colors and palettes {#sec-colors}
 
 The GBA is capable of displaying 16bit colors in a 5.5.5 format. That means 5 bits for red, 5 for green and 5 for blue; the leftover bit is unused. Basically, the bit-pattern looks like this: “<code>x<font color=blue>bbbbb</font><font color= green>ggggg</font><font color= red>rrrrr</font></code>”. There are a number of defines and macros in `color.h` that will make dealing with color easier.
-<br>  
-Now, as for palettes...  
+<br>
+Now, as for palettes...
 
-`<rant>`  
-_Guys, the word here is **“palette”**! One ‘l’, two ‘t’s and an ‘e’ at the end. It is not a **“pallet”**, which is “a low, portable platform, usually double-faced, on which materials are stacked for storage or transportation, as in a warehouse”, nor is it a **“pallette”**, meaning “a plate protecting the armpit, in a suit of armor”. The word **“pallete”**, its most common variant, isn't even in the dictionary, thus not even worth considering. It's “palette”, people, “palette”._  
+`<rant>`
+_Guys, the word here is **“palette”**! One ‘l’, two ‘t’s and an ‘e’ at the end. It is not a **“pallet”**, which is “a low, portable platform, usually double-faced, on which materials are stacked for storage or transportation, as in a warehouse”, nor is it a **“pallette”**, meaning “a plate protecting the armpit, in a suit of armor”. The word **“pallete”**, its most common variant, isn't even in the dictionary, thus not even worth considering. It's “palette”, people, “palette”._
 `</rant>`
 
 Anyhoo, the GBA has two palettes, one for sprites (objects) and one for backgrounds. Both palettes contain 256 entries of 16bit colors (512 bytes, each). The background palette starts at `0500:0000h`, immediately followed by the sprite palette at `0500:0200h`. Sprites and backgrounds can use these palettes in two ways: as a single palette with 256 colors (8 bits per pixel); or as 16 sub-palettes or <dfn>palette banks</dfn> of 16 colors (4 bits per pixel).
@@ -66,7 +66,7 @@ One final thing about palettes: index 0 is the <dfn>transparency index</dfn>. In
 
 ## Bitmaps, backgrounds and sprites {#sec-vid-types}
 
-All things considered, the GBA knows 3 types of graphics representations: <dfn>bitmaps</dfn>, <dfn>tiled backgrounds</dfn> and <dfn>sprites</dfn>. The bitmap and tiled background (also simply known as background) types affect how the whole screen is built up and as such cannot both be activated at the same time.  
+All things considered, the GBA knows 3 types of graphics representations: <dfn>bitmaps</dfn>, <dfn>tiled backgrounds</dfn> and <dfn>sprites</dfn>. The bitmap and tiled background (also simply known as background) types affect how the whole screen is built up and as such cannot both be activated at the same time.
 In bitmap mode, video memory works just like a *w*×*h* bitmap. To plot a pixel at location (*x,y*), go to location *y\*w+x* and fill in the color. Note that you cannot build up a screen-full of individual pixels each frame on the GBA, there are simply too many of them.
 
 Tiled backgrounds work completely different. First, you store 8x8 pixel <dfn>tile</dfn>s in one part of video memory. Then, in another part, you build up a tile-map, which contains indices that tells the GBA which tiles go into the image you see on the screen. To build a screen you'd only need a 30x20 map of numbers and the hardware takes care of drawing the tiles that these numbers point to. This way, you *can* update an entire screen each frame. There are very few games that do not rely on this graphics type.
@@ -129,8 +129,8 @@ The REG_DISPCNT register is the primary control of the screen. The bit-layout of
 <tr class="bg0">
   <td>4   <td class="rclr3">PS
   <td>DCNT_PAGE
-  <td>Page select. Modes 4 and 5 can use page flipping for smoother 
-    animation. This bit selects the displayed page (and allowing the 
+  <td>Page select. Modes 4 and 5 can use page flipping for smoother
+    animation. This bit selects the displayed page (and allowing the
     other one to be drawn on without artifacts).
 <tr class="bg1">
   <td>5   <td class="rclr5">HB
@@ -140,34 +140,34 @@ The REG_DISPCNT register is the primary control of the screen. The bit-layout of
 <tr class="bg0">
   <td>6   <td class="rclr2">OM
   <td>DCNT_OBJ_1D
-  <td>Object mapping mode. Tile memory can be seen as a 32x32 
-    matrix of tiles. When sprites are composed of multiple tiles 
-    high, this bit tells whether the next row of tiles lies 
-    beneath the previous, in correspondence with the matrix 
-    structure (2D mapping, <code>OM</code>=0), or right next to 
-    it, so that memory is arranged as an array of sprites (1D 
-    mapping <code>OM</code>=1). More on this in the 
+  <td>Object mapping mode. Tile memory can be seen as a 32x32
+    matrix of tiles. When sprites are composed of multiple tiles
+    high, this bit tells whether the next row of tiles lies
+    beneath the previous, in correspondence with the matrix
+    structure (2D mapping, <code>OM</code>=0), or right next to
+    it, so that memory is arranged as an array of sprites (1D
+    mapping <code>OM</code>=1). More on this in the
     <a href="regobj.html">sprite</a> chapter.
 <tr class="bg1">
   <td>7   <td class="rclr6">FB
   <td>DCNT_BLANK
   <td>Force a screen blank.
 <tr class="bg0">
-  <td>8-B  <td class="rclr1">BG0-BG3, Obj
+  <td>8-C  <td class="rclr1">BG0-BG3, Obj
   <td>DCNT_BGx, DCNT_OBJ. <i>DCNT_LAYER#</i>
   <td>Enables rendering of the corresponding background and sprites.
 <tr class="bg1">
-  <td>D-F <td class="rclr4">W0-OW
+  <td>D-F <td class="rclr4">Obj-OW
   <td>DCNT_WINx, DCNT_WINOBJ
   <td>Enables the use of windows 0, 1 and Object window, respectively.
-    Windows can be used to mask out certain areas (like the 
+    Windows can be used to mask out certain areas (like the
     lamp did in Zelda:LTTP).
 </tbody>
 </table>
 </div>
 
 Setting the display control is probably the first thing you'll be doing. For simple demos, you can just set it once and leave it at that, though switching between the video-modes can have some interesting results.
-<br>  
+<br>
 Now the other two registers I mentioned, `REG_DISPSTAT` and `REG_VCOUNT`. The latter tells you the scanline that is currently being worked on. Note that this counter keeps going into the VBlank as well, so it counts to 227 before starting at 0 again. The former gives you information about the Draw/Blank status and is used to set display [interrupts](interrupts.html). You can also do some really cool stuff with the interrupts that you can enable here. For one thing, the HBlank interrupt is used in creating [Mode 7](mode7.html) graphics, and you want to know how that works, don't you?
 
 <div class="reg">
@@ -206,27 +206,27 @@ Now the other two registers I mentioned, `REG_DISPSTAT` and `REG_VCOUNT`. The la
 <tr class="bg0">
   <td>2 <td class="rclr2">VcS
   <td>DSTAT_IN_VCT
-  <td>VCount trigger status. Set if the current scanline matches the 
-    scanline trigger ( <code>REG_VCOUNT</code> == 
+  <td>VCount trigger status. Set if the current scanline matches the
+    scanline trigger ( <code>REG_VCOUNT</code> ==
     <code>REG_DISPSTAT</code>{8-F} )
 <tr class="bg1">
   <td>3 <td class="rclr0">VbI
   <td>DSTAT_VBL_IRQ
-  <td>VBlank interrupt request. If set, an interrupt will be fired at 
+  <td>VBlank interrupt request. If set, an interrupt will be fired at
     VBlank.
 <tr class="bg0">
   <td>4 <td class="rclr1">HbI
   <td>DSTAT_HBL_IRQ
-  <td>HBlank interrupt request. 
+  <td>HBlank interrupt request.
 <tr class="bg1">
   <td>5 <td class="rclr2">VcI
   <td>DSTAT_VCT_IRQ
-  <td>VCount interrupt request. Fires interrupt if current scanline 
+  <td>VCount interrupt request. Fires interrupt if current scanline
     matches trigger value.
 <tr class="bg0">
   <td>8-F <td class="rclr3">VcT
   <td><i>DSTAT_VCT#</i>
-  <td>VCount trigger value. If the current scanline is at this value, 
+  <td>VCount trigger value. If the current scanline is at this value,
     bit 2 is set and an interrupt is fired if requested.
 </tbody>
 </table>
@@ -268,7 +268,7 @@ void vid_vsync()
 {    while(REG_VCOUNT < 160);   }
 ```
 
-Unfortunately, there are a few problems with this code. 
+Unfortunately, there are a few problems with this code.
 
 First of all, if you're simply doing an empty `while` loop to wait for 160, the compiler may try to get smart, notice that the loop doesn't change `REG_VCOUNT` and put its value in a register for easy reference. Since there is a good chance that that value will be below 160 at some point, you have a nice little infinite loop on your hand. To prevent this, use the keyword _`volatile`_ (see `regs.h`).
 
@@ -285,5 +285,5 @@ void vid_vsync()
 ```
 
 This will always wait until the start of the next VBlank occurs. And `REG_VCOUNT` is now _`volatile`_ (the “`vu16`” is `typedef`ed as a <u>v</u>olatile <u>u</u>nsigned (<u>16</u>bit) short. I'll be using a lot of this kind of shorthand, so get used to it). That's one way to do it. Another is checking the last bit in the display status register, `REG_DISPSTAT`\{0\}.
-<br>  
+<br>
 So we're done here, right? Errm ... no, not exactly. While it's true that you now have an easy way to vsync, it's also a very poor one. While you're in the while loop, you're still burning CPU cycles. Which, of course, costs battery power. And since you're doing absolutely nothing inside that while-loop, you're not just using it, you're actually wasting battery power. Moreover, since you will probably make only small games at first, you'll be wasting a *LOT* of battery power. The recommended way to vsync is putting the CPU in low-power mode when you're done and then use interrupts to bring it back to life again. You can read about the procedure [here](swi.html#sec-vsync2), but since you have to know how to use [interrupts](interrupts.html) and [BIOS calls](swi.html), you might want to wait a while.
